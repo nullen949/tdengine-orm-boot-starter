@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.kalus.tdengineorm.config.TDengineOrmAutoConfiguration
+com.nullen.tdengineorm.config.TDengineOrmAutoConfiguration

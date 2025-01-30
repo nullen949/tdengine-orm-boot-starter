@@ -1,6 +1,6 @@
 ## 介绍
 
-> `tdengine-orm-spring-boot-starter`是一个基于SpringBootJdbc, 便捷操作TDengine数据的半ORM框架, 参考了MyBatisPlus的设计
+> `tdengine-orm-boot-starter`是一个基于SpringBootJdbc, 便捷操作TDengine数据的半ORM框架, 参考了MyBatisPlus的设计
 
 ### 技术栈
 
@@ -14,12 +14,12 @@
 2. 在你的项目内引入依赖
     ```xml
     <dependency>
-        <groupId>com.klaus.tdengineorm</groupId>
+        <groupId>com.nullen.tdengineorm</groupId>
         <artifactId>tdengine-orm-boot-starter</artifactId>
         <version>1.0-SNAPSHOT</version>
     </dependency>
     ```
-3. 下载Demo项目源码: [Demo项目仓库地址](https://github.com/klaus-cicd/tdengine-orm-demo)
+3. 下载Demo项目源码: [Demo项目仓库地址](https://github.com/nullen949/tdengine-orm-demo)
 4. 修改Demo项目内配置文件内的连接配置, 创建对应的数据库(如果没有)
 5. 找到测试类, 按顺序依次执行测试方法
 6. 回到你的项目, 参考Demo的使用方式进行使用
