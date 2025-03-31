@@ -1,5 +1,7 @@
 ## 介绍
 
+[English](README.md) | [中文](README_CN.md)
+
 > `tdengine-orm-boot-starter` 是一个基于 SpringBootJdbc 的半 ORM 框架，用于便捷操作 TDengine 数据，其设计参考了 MyBatisPlus
 
 ### 技术栈

@@ -1,5 +1,7 @@
 ## Introduction
 
+[English](README.md) | [中文](README_CN.md)
+
 > `tdengine-orm-boot-starter` is a semi-ORM framework based on SpringBootJdbc for convenient operation of TDengine data, inspired by MyBatisPlus design
 
 ### Tech Stack
