@@ -14,7 +14,7 @@
 2. 在你的项目内引入依赖
     ```xml
     <dependency>
-        <groupId>com.nullen.tdengineorm</groupId>
+        <groupId>com.github.nullen949</groupId>
         <artifactId>tdengine-orm-boot-starter</artifactId>
         <version>1.0-SNAPSHOT</version>
     </dependency>
