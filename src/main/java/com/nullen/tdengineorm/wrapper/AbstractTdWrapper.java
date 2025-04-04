@@ -1,8 +1,9 @@
 package com.nullen.tdengineorm.wrapper;
 
+import ch.qos.logback.classic.db.names.TableName;
 import cn.hutool.core.annotation.AnnotationUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.nullen.tdengineorm.annotation.TdTable;
 import com.nullen.tdengineorm.constant.SqlConstant;
 import com.nullen.tdengineorm.constant.TdSqlConstant;
 import com.nullen.tdengineorm.enums.TdWrapperTypeEnum;
@@ -49,7 +50,7 @@ public abstract class AbstractTdWrapper<T> {
     }
 
     protected void initTbName() {
-        String name = AnnotationUtil.getAnnotationValue(entityClass, TableName.class, "value");
+        String name = AnnotationUtil.getAnnotationValue(entityClass, TdTable.class, "value");
         if (StrUtil.isBlank(name)) {
             name = StrUtil.toUnderlineCase(entityClass.getSimpleName());
         }

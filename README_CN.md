@@ -8,7 +8,6 @@
 
 - spring-boot-starter 2.X：主要使用 SpringBoot 的自动装配功能，虽然 SpringBoot 2.7 之后自动装配方式有所修改，但旧的方式仍然兼容
 - spring-boot-starter-jdbc 2.x：主要使用 JdbcTemplate 对象
-- MyBatisPlusAnnotation 3.5.x：主要使用其注解功能，如 @TableName、@TableField 等
 
 ## 快速开始
 

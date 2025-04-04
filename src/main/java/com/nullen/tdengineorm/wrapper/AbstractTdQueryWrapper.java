@@ -10,7 +10,7 @@ import com.nullen.tdengineorm.exception.TdOrmException;
 import com.nullen.tdengineorm.exception.TdOrmExceptionCode;
 import com.nullen.tdengineorm.func.GetterFunction;
 import com.nullen.tdengineorm.util.AssertUtil;
-import com.nullen.tdengineorm.util.SqlUtil;
+import com.nullen.tdengineorm.util.TdSqlUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -174,7 +174,7 @@ public abstract class AbstractTdQueryWrapper<T> extends AbstractTdWrapper<T> {
     }
 
     protected String getColumnName(GetterFunction<T, ?> getterFunc) {
-        return SqlUtil.getColumnName(getEntityClass(), getterFunc);
+        return TdSqlUtil.getColumnName(getEntityClass(), getterFunc);
     }
 
     protected void doIn(String columnName, Object... valueArray) {
@@ -186,7 +186,7 @@ public abstract class AbstractTdQueryWrapper<T> extends AbstractTdWrapper<T> {
                     String paramName = genParamName();
                     paramsMap.put(paramName, value);
                     return SqlConstant.COLON + paramName;
-                }).collect(SqlUtil.getParenthesisCollector());
+                }).collect(TdSqlUtil.getParenthesisCollector());
 
         where
                 .append(columnName)

@@ -3,7 +3,7 @@ package com.nullen.tdengineorm.wrapper;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nullen.tdengineorm.constant.SqlConstant;
-import com.nullen.tdengineorm.entity.BaseTdEntity;
+import com.nullen.tdengineorm.entity.TdBaseEntity;
 import com.nullen.tdengineorm.enums.JoinTypeEnum;
 import com.nullen.tdengineorm.enums.TdSelectFuncEnum;
 import com.nullen.tdengineorm.enums.TdWindFuncTypeEnum;
@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  * @author Nullen
  * @date 2024/05/11
  */
-public class TdQueryWrapper<T extends BaseTdEntity> extends AbstractTdQueryWrapper<T> {
+public class TdQueryWrapper<T extends TdBaseEntity> extends AbstractTdQueryWrapper<T> {
 
     public TdQueryWrapper(Class<T> entityClass) {
         super(entityClass);
@@ -41,7 +41,7 @@ public class TdQueryWrapper<T extends BaseTdEntity> extends AbstractTdQueryWrapp
     public TdQueryWrapper<T> selectAll(Class<?> selectClass) {
         List<Field> allFields = ClassUtil.getAllFields(selectClass);
         AssertUtil.notEmpty(allFields, new TdOrmException(TdOrmExceptionCode.NO_FILED));
-        String[] columnNames = allFields.stream().map(SqlUtil::getColumnName).toArray(String[]::new);
+        String[] columnNames = allFields.stream().map(TdSqlUtil::getColumnName).toArray(String[]::new);
         addColumnNames(columnNames);
         return this;
     }
@@ -57,7 +57,7 @@ public class TdQueryWrapper<T extends BaseTdEntity> extends AbstractTdQueryWrapp
         }
 
         String[] fieldNameArray = Arrays.stream(getterFuncArray)
-                .map(getter -> tbName + SqlConstant.DOT + SqlUtil.getColumnName(getEntityClass(), getter))
+                .map(getter -> tbName + SqlConstant.DOT + TdSqlUtil.getColumnName(getEntityClass(), getter))
                 .toArray(String[]::new);
         addColumnNames(fieldNameArray);
         return this;
@@ -68,9 +68,9 @@ public class TdQueryWrapper<T extends BaseTdEntity> extends AbstractTdQueryWrapp
             throw new TdOrmException(TdOrmExceptionCode.NO_SELECT);
         }
 
-        String getterTbName = SqlUtil.getTbName(clazz);
+        String getterTbName = TdSqlUtil.getTbName(clazz);
         String[] fieldNameArray = Arrays.stream(getterFuncArray)
-                .map(getter -> getterTbName + SqlConstant.DOT + SqlUtil.getColumnName(clazz, getter))
+                .map(getter -> getterTbName + SqlConstant.DOT + TdSqlUtil.getColumnName(clazz, getter))
                 .toArray(String[]::new);
         addColumnNames(fieldNameArray);
         return this;
@@ -125,7 +125,7 @@ public class TdQueryWrapper<T extends BaseTdEntity> extends AbstractTdQueryWrapp
     }
 
     public <R> TdQueryWrapper<T> selectFunc(TdSelectFuncEnum selectFuncEnum, GetterFunction<T, ?> column, GetterFunction<R, ?> aliasColumn) {
-        selectFunc(selectFuncEnum, getColumnName(column), SqlUtil.getColumnName(LambdaUtil.getEntityClass(aliasColumn), aliasColumn));
+        selectFunc(selectFuncEnum, getColumnName(column), TdSqlUtil.getColumnName(LambdaUtil.getEntityClass(aliasColumn), aliasColumn));
         return this;
     }
 
@@ -242,11 +242,11 @@ public class TdQueryWrapper<T extends BaseTdEntity> extends AbstractTdQueryWrapp
 
 
     public <R> TdQueryWrapper<T> orderByDesc(Class<R> clazz, GetterFunction<R, ?> getterFunc) {
-        return orderByDesc(SqlUtil.getColumnName(clazz, getterFunc));
+        return orderByDesc(TdSqlUtil.getColumnName(clazz, getterFunc));
     }
 
     public <R> TdQueryWrapper<T> orderByAsc(Class<R> clazz, GetterFunction<R, ?> getterFunc) {
-        return orderByAsc(SqlUtil.getColumnName(clazz, getterFunc));
+        return orderByAsc(TdSqlUtil.getColumnName(clazz, getterFunc));
     }
 
     public TdQueryWrapper<T> orderByDesc(GetterFunction<T, ?> getterFunc) {
@@ -472,8 +472,8 @@ public class TdQueryWrapper<T extends BaseTdEntity> extends AbstractTdQueryWrapp
      * @param joinTableClass 连接表类
      * @return {@link TdQueryWrapper }<{@link T }>
      */
-    public <R extends BaseTdEntity> TdQueryWrapper<T> join(JoinTypeEnum joinType, Class<R> joinTableClass) {
-        String joinTbName = SqlUtil.getTbName(joinTableClass);
+    public <R extends TdBaseEntity> TdQueryWrapper<T> join(JoinTypeEnum joinType, Class<R> joinTableClass) {
+        String joinTbName = TdSqlUtil.getTbName(joinTableClass);
         joinQueryEntityList.add(JoinQuery.builder()
                 .joinType(joinType)
                 .joinTableName(joinTbName)

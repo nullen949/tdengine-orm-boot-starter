@@ -49,7 +49,7 @@ public class JdbcTemplatePlus {
     @Transactional(rollbackFor = Exception.class)
     public <T> void saveBatch(Class<T> entityClass, String defaultTbName, List<T> entityList) {
         List<Field> allFields = ClassUtil.getAllFields(entityClass);
-        StringBuilder insertIntoSql = SqlUtil.getInsertIntoSql(CollectionUtils.isEmpty(entityList), defaultTbName, entityClass, allFields, false);
+        StringBuilder insertIntoSql = TdSqlUtil.getInsertIntoSql(CollectionUtils.isEmpty(entityList), defaultTbName, entityClass, allFields, false);
         if (StrUtil.isBlank(insertIntoSql)) {
             log.warn("JdbcTemplateUtil#saveBatch fail, build sql fail, entityList or fieldList is empty! class:{}", entityClass.getSimpleName());
             return;
@@ -71,7 +71,7 @@ public class JdbcTemplatePlus {
     public <T> void saveOrUpdateBatch(Class<T> entityClass, String defaultTbName, List<T> entityList) {
         List<Field> fields = ClassUtil.getAllFields(entityClass);
 
-        StringBuilder initSql = SqlUtil.getInsertIntoSql(CollectionUtils.isEmpty(entityList), defaultTbName, entityClass, fields, true);
+        StringBuilder initSql = TdSqlUtil.getInsertIntoSql(CollectionUtils.isEmpty(entityList), defaultTbName, entityClass, fields, true);
         if (StrUtil.isBlank(initSql)) {
             log.warn("JdbcTemplateUtil#saveOrUpdateBatch fail, build sql fail, entityList or fieldList is empty! class:{}", entityClass.getSimpleName());
             return;
@@ -94,7 +94,7 @@ public class JdbcTemplatePlus {
             log.warn("JdbcTemplateUtil#saveBatch fail, map is empty! ");
             return;
         }
-        StringBuilder insertIntoSql = SqlUtil.getInsertIntoSql(tbName, standMap);
+        StringBuilder insertIntoSql = TdSqlUtil.getInsertIntoSql(tbName, standMap);
 
         // 将列表数据进行分批处理，默认是 500 一批次
         doBatchUpdateByMap(mapList, insertIntoSql.toString(), 500, standMap);
@@ -116,7 +116,7 @@ public class JdbcTemplatePlus {
             return;
         }
 
-        StringBuilder insertIntoSql = SqlUtil.getInsertIntoSql(tbName, standMap, idKeyName, true);
+        StringBuilder insertIntoSql = TdSqlUtil.getInsertIntoSql(tbName, standMap, idKeyName, true);
         if (StrUtil.isEmpty(insertIntoSql)) {
             log.warn("JdbcTemplateUtil#saveOrUpdateBatch fail, build sql fail, map is empty! ");
             return;

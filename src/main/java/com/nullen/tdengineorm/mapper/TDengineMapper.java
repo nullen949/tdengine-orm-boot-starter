@@ -7,7 +7,7 @@ import com.nullen.tdengineorm.annotation.TdTag;
 import com.nullen.tdengineorm.constant.SqlConstant;
 import com.nullen.tdengineorm.constant.TdSqlConstant;
 import com.nullen.tdengineorm.dto.Page;
-import com.nullen.tdengineorm.entity.BaseTdEntity;
+import com.nullen.tdengineorm.entity.TdBaseEntity;
 import com.nullen.tdengineorm.enums.TdLogLevelEnum;
 import com.nullen.tdengineorm.exception.TdOrmException;
 import com.nullen.tdengineorm.exception.TdOrmExceptionCode;
@@ -50,7 +50,7 @@ public class TDengineMapper {
      * @param clazz clazz
      * @return {@link T }
      */
-    public <T extends BaseTdEntity> T getLastOneByTs(Class<T> clazz) {
+    public <T extends TdBaseEntity> T getLastOneByTs(Class<T> clazz) {
         TdQueryWrapper<T> wrapper = TdWrappers.queryWrapper(clazz)
                 .selectAll()
                 .orderByDesc("ts")
@@ -99,11 +99,11 @@ public class TDengineMapper {
         return listWithTdLog(wrapper.getSql(), wrapper.getParamsMap(), resultClass);
     }
 
-    public <T extends BaseTdEntity> Page<T> page(long pageNo, long pageSize, TdQueryWrapper<T> wrapper) {
+    public <T extends TdBaseEntity> Page<T> page(long pageNo, long pageSize, TdQueryWrapper<T> wrapper) {
         return page(pageNo, pageSize, wrapper, wrapper.getEntityClass());
     }
 
-    public <T extends BaseTdEntity, R> Page<R> page(long pageNo, long pageSize, TdQueryWrapper<T> wrapper, Class<R> resultClass) {
+    public <T extends TdBaseEntity, R> Page<R> page(long pageNo, long pageSize, TdQueryWrapper<T> wrapper, Class<R> resultClass) {
         String countSql = "select count(*) from (" + wrapper.getSql() + ") t";
         Long count = namedParameterJdbcTemplate.queryForObject(countSql, wrapper.getParamsMap(), Long.class);
         Page<R> page = Page.<R>builder()
@@ -142,11 +142,11 @@ public class TDengineMapper {
         }
 
         Map<String, Object> paramsMap = new HashMap<>(noTagFieldList.size());
-        String tbName = SqlUtil.getTbName(object.getClass());
+        String tbName = TdSqlUtil.getTbName(object.getClass());
         if (null != dynamicNameStrategy) {
             tbName = dynamicNameStrategy.dynamicTableName(tbName);
         }
-        String sql = SqlConstant.INSERT_INTO + tbName + SqlUtil.joinColumnNamesAndValuesSql(object, noTagFieldList, paramsMap);
+        String sql = SqlConstant.INSERT_INTO + tbName + TdSqlUtil.joinColumnNamesAndValuesSql(object, noTagFieldList, paramsMap);
         return updateWithTdLog(sql, paramsMap);
     }
 
@@ -162,7 +162,7 @@ public class TDengineMapper {
 
     public <T> int[] batchInsert(Class<T> clazz, List<T> entityList, int pageSize, DynamicNameStrategy dynamicTbNameStrategy) {
         // 根据策略获取表名称
-        String tbName = dynamicTbNameStrategy.dynamicTableName(SqlUtil.getTbName(clazz));
+        String tbName = dynamicTbNameStrategy.dynamicTableName(TdSqlUtil.getTbName(clazz));
         // 不使用USING语法时, 不能指定TAG字段的值
         List<Field> fieldList = ClassUtil.getAllFields(clazz, field -> !field.isAnnotationPresent(TdTag.class));
         // 以防数据量过大, 分批进行插入
@@ -172,7 +172,7 @@ public class TDengineMapper {
         for (int i = 0; i < partition.size(); i++) {
             List<T> list = partition.get(i);
             Map<String, Object> paramsMap = new HashMap<>(list.size());
-            StringBuilder insertIntoSql = SqlUtil.getInsertIntoSqlPrefix(tbName, fieldList);
+            StringBuilder insertIntoSql = TdSqlUtil.getInsertIntoSqlPrefix(tbName, fieldList);
             StringBuilder finalSql = new StringBuilder(insertIntoSql);
             joinInsetSqlSuffix(list, finalSql, paramsMap);
             int singleResult = namedParameterJdbcTemplate.update(finalSql.toString(), paramsMap);
@@ -210,7 +210,7 @@ public class TDengineMapper {
      * @param clazz clazz
      * @return int
      */
-    public <T extends BaseTdEntity> int createStableTable(Class<T> clazz) {
+    public <T extends TdBaseEntity> int createStableTable(Class<T> clazz) {
         List<Field> fieldList = ClassUtil.getAllFields(clazz);
         // 区分普通字段和Tag字段
         Pair<List<Field>, List<Field>> fieldListPairByTag = TdSqlUtil.differentiateByTag(fieldList);
@@ -222,7 +222,7 @@ public class TDengineMapper {
 
         Field primaryTsField = TdSqlUtil.checkPrimaryTsField(commFieldList);
 
-        String finalSql = TdSqlConstant.CREATE_STABLE + SqlUtil.getTbName(clazz) + TdSqlUtil.buildCreateColumn(commFieldList, primaryTsField);
+        String finalSql = TdSqlConstant.CREATE_STABLE + TdSqlUtil.getTbName(clazz) + TdSqlUtil.buildCreateColumn(commFieldList, primaryTsField);
         List<Field> tagFieldList = fieldListPairByTag.getKey();
 
         if (CollectionUtils.isEmpty(tagFieldList)) {
@@ -246,7 +246,7 @@ public class TDengineMapper {
                 .filter(field -> field.isAnnotationPresent(TdTag.class))
                 .collect(Collectors.toList());
 
-        Map<String, Object> tagValueMap = SqlUtil.getFiledValueMap(tagFields, t);
+        Map<String, Object> tagValueMap = TdSqlUtil.getFiledValueMap(tagFields, t);
 
         for (List<T> list : partition) {
             Map<String, Object> paramsMap = new HashMap<>(list.size());
@@ -261,16 +261,16 @@ public class TDengineMapper {
         }
     }
 
-    public <T extends BaseTdEntity> int deleteByTs(Class<T> clazz, Timestamp ts) {
-        String tbName = SqlUtil.getTbName(clazz);
+    public <T extends TdBaseEntity> int deleteByTs(Class<T> clazz, Timestamp ts) {
+        String tbName = TdSqlUtil.getTbName(clazz);
         String sql = "DELETE FROM " + tbName + " WHERE ts = :ts";
         Map<String, Object> paramsMap = new HashMap<>(1);
         paramsMap.put("ts", ts);
         return namedParameterJdbcTemplate.update(sql, paramsMap);
     }
 
-    public <T extends BaseTdEntity> int batchDeleteByTs(Class<T> clazz, List<Timestamp> tsList) {
-        String tbName = SqlUtil.getTbName(clazz);
+    public <T extends TdBaseEntity> int batchDeleteByTs(Class<T> clazz, List<Timestamp> tsList) {
+        String tbName = TdSqlUtil.getTbName(clazz);
         String sql = "DELETE FROM " + tbName + " WHERE ts IN (:tsList)";
         Map<String, Object> paramsMap = new HashMap<>(1);
         paramsMap.put("tsList", tsList);
@@ -315,7 +315,7 @@ public class TDengineMapper {
         for (int i = 0; i < list.size(); i++) {
             T entity = list.get(i);
             List<Field> fields = ClassUtil.getAllFields(entity.getClass(), field -> !field.isAnnotationPresent(TdTag.class));
-            Pair<String, Map<String, Object>> insertSqlSuffix = SqlUtil.getInsertSqlSuffix(entity, fields, i);
+            Pair<String, Map<String, Object>> insertSqlSuffix = TdSqlUtil.getInsertSqlSuffix(entity, fields, i);
             finalSql.append(insertSqlSuffix.getKey());
             paramsMap.putAll(insertSqlSuffix.getValue());
         }

@@ -8,7 +8,6 @@
 
 - spring-boot-starter 2.X Mainly uses SpringBoot's auto-configuration feature. After SpringBoot 2.7, the auto-configuration method has changed, but the old way remains compatible
 - spring-boot-starter-jdbc 2.x Mainly uses the JdbcTemplate object
-- MyBatisPlusAnnotation 3.5.x Mainly uses a few annotations, such as @TableName @TableField
 
 ## Quick Start
 
