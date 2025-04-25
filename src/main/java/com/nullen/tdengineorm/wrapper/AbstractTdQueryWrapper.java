@@ -92,9 +92,11 @@ public abstract class AbstractTdQueryWrapper<T> extends AbstractTdWrapper<T> {
     }
 
     private void buildSelect(StringBuilder sql) {
-        AssertUtil.isTrue(ArrayUtil.isNotEmpty(selectColumnNames) || null != selectCalcWrapper, new TdOrmException(TdOrmExceptionCode.NO_SELECT));
         sql.append(SqlConstant.SELECT);
-        if (ArrayUtil.isNotEmpty(selectColumnNames)) {
+        if (ArrayUtil.isEmpty(selectColumnNames)) {
+            // 默认查询所有字段
+            sql.append(SqlConstant.ALL);
+        } else {
             for (int i = 1; i <= selectColumnNames.length; i++) {
                 if (i > 1) {
                     sql.append(SqlConstant.COMMA);
@@ -196,7 +198,7 @@ public abstract class AbstractTdQueryWrapper<T> extends AbstractTdWrapper<T> {
     }
 
 
-        protected void doNotIn(String column, Object... valueArray) {
+    protected void doNotIn(String column, Object... valueArray) {
         if (StrUtil.isNotBlank(where)) {
             where.append(SqlConstant.AND);
         }
