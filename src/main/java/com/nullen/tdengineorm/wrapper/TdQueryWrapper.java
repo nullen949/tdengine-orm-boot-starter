@@ -10,7 +10,10 @@ import com.nullen.tdengineorm.enums.TdWindFuncTypeEnum;
 import com.nullen.tdengineorm.exception.TdOrmException;
 import com.nullen.tdengineorm.exception.TdOrmExceptionCode;
 import com.nullen.tdengineorm.func.GetterFunction;
-import com.nullen.tdengineorm.util.*;
+import com.nullen.tdengineorm.util.AssertUtil;
+import com.nullen.tdengineorm.util.ClassUtil;
+import com.nullen.tdengineorm.util.LambdaUtil;
+import com.nullen.tdengineorm.util.TdSqlUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -106,15 +109,9 @@ public class TdQueryWrapper<T extends TdBaseEntity> extends AbstractTdQueryWrapp
         return this;
     }
 
-    @SafeVarargs
-    public final TdQueryWrapper<T> selectFunc(TdSelectFuncEnum selectFuncEnum, GetterFunction<T, ?>... getterFuncArray) {
-        String[] array = Arrays.stream(getterFuncArray)
-                .map(getterFunc -> {
-                    String columnName = getColumnName(getterFunc);
-                    return TdSqlUtil.buildAggregationFunc(selectFuncEnum, columnName, columnName);
-                })
-                .toArray(String[]::new);
-        addColumnNames(array);
+    public final TdQueryWrapper<T> selectFunc(TdSelectFuncEnum selectFuncEnum, GetterFunction<T, ?> getterFunc, String aliasColumnName) {
+        String columName = TdSqlUtil.buildAggregationFunc(selectFuncEnum, getColumnName(getterFunc), aliasColumnName);
+        addColumnName(columName);
         return this;
     }
 
@@ -282,6 +279,23 @@ public class TdQueryWrapper<T extends TdBaseEntity> extends AbstractTdQueryWrapp
         return condition ? in(column, valueArray) : this;
     }
 
+    public TdQueryWrapper<T> notIn(String columnName, Object... valueArray) {
+        doNotIn(columnName, valueArray);
+        return this;
+    }
+
+    public TdQueryWrapper<T> notIn(GetterFunction<T, ?> column, Object... valueArray) {
+        doNotIn(getColumnName(column), valueArray);
+        return this;
+    }
+
+    public TdQueryWrapper<T> notIn(boolean condition, String columnName, Object... valueArray) {
+        return condition ? in(columnName, valueArray) : this;
+    }
+
+    public TdQueryWrapper<T> notIn(boolean condition, GetterFunction<T, ?> column, Object... valueArray) {
+        return condition ? notIn(column, valueArray) : this;
+    }
 
     public TdQueryWrapper<T> innerQueryWrapper(Consumer<TdQueryWrapper<T>> innerQueryWrapperConsumer) {
         TdQueryWrapper<T> innerWrapper = TdWrappers.queryWrapper(getEntityClass());

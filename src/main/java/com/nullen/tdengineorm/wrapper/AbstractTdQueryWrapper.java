@@ -195,6 +195,28 @@ public abstract class AbstractTdQueryWrapper<T> extends AbstractTdWrapper<T> {
                 .append(SqlConstant.BLANK);
     }
 
+
+        protected void doNotIn(String column, Object... valueArray) {
+        if (StrUtil.isNotBlank(where)) {
+            where.append(SqlConstant.AND);
+        }
+
+        Map<String, Object> paramsMap = getParamsMap();
+        String finalInColumnsStr = Arrays.stream(valueArray)
+                .map(value -> {
+                    String paramName = genParamName();
+                    paramsMap.put(paramName, value);
+                    return SqlConstant.COLON + paramName;
+                }).collect(TdSqlUtil.getParenthesisCollector());
+
+        where
+                .append(column)
+                .append(SqlConstant.NOT_IN)
+                .append(finalInColumnsStr)
+                .append(SqlConstant.BLANK);
+    }
+
+
     protected void doNotNull(String columnName) {
         if (StrUtil.isNotBlank(where)) {
             where.append(SqlConstant.AND);
