@@ -1,13 +1,15 @@
 package com.nullen.tdengineorm.config;
 
-import com.nullen.tdengineorm.mapper.TDengineMapper;
+import com.nullen.tdengineorm.repository.TDengineRepository;
 import com.nullen.tdengineorm.util.JdbcTemplatePlus;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 /**
  * @author Nullen
  */
+@EnableConfigurationProperties(TDengineOrmConfig.class)
 public class TDengineOrmAutoConfiguration {
 
     @Bean
@@ -17,8 +19,8 @@ public class TDengineOrmAutoConfiguration {
 
 
     @Bean
-    public TDengineMapper tdengineMapper(JdbcTemplatePlus jdbcTemplatePlus, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-        return new TDengineMapper(jdbcTemplatePlus, namedParameterJdbcTemplate);
+    public TDengineRepository tdengineMapper(JdbcTemplatePlus jdbcTemplatePlus, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        return new TDengineRepository(jdbcTemplatePlus, namedParameterJdbcTemplate);
     }
 
 }
