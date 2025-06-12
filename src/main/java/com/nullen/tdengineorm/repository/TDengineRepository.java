@@ -1,4 +1,4 @@
-package com.nullen.tdengineorm.mapper;
+package com.nullen.tdengineorm.repository;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.Pair;
@@ -13,7 +13,10 @@ import com.nullen.tdengineorm.exception.TdOrmException;
 import com.nullen.tdengineorm.exception.TdOrmExceptionCode;
 import com.nullen.tdengineorm.strategy.DefaultDynamicNameStrategy;
 import com.nullen.tdengineorm.strategy.DynamicNameStrategy;
-import com.nullen.tdengineorm.util.*;
+import com.nullen.tdengineorm.util.ClassUtil;
+import com.nullen.tdengineorm.util.JdbcTemplatePlus;
+import com.nullen.tdengineorm.util.TdOrmUtil;
+import com.nullen.tdengineorm.util.TdSqlUtil;
 import com.nullen.tdengineorm.wrapper.AbstractTdQueryWrapper;
 import com.nullen.tdengineorm.wrapper.TdQueryWrapper;
 import com.nullen.tdengineorm.wrapper.TdWrappers;
@@ -38,7 +41,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Setter
 @RequiredArgsConstructor
-public class TDengineMapper {
+public class TDengineRepository {
 
     private final JdbcTemplatePlus jdbcTemplatePlus;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
