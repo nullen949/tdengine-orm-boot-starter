@@ -3,7 +3,6 @@ package com.nullen.tdengineorm.wrapper;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nullen.tdengineorm.constant.SqlConstant;
-import com.nullen.tdengineorm.entity.TdBaseEntity;
 import com.nullen.tdengineorm.enums.JoinTypeEnum;
 import com.nullen.tdengineorm.enums.TdSelectFuncEnum;
 import com.nullen.tdengineorm.enums.TdWindFuncTypeEnum;
@@ -30,7 +29,7 @@ import java.util.function.Consumer;
  * @author Nullen
  * @date 2024/05/11
  */
-public class TdQueryWrapper<T extends TdBaseEntity> extends AbstractTdQueryWrapper<T> {
+public class TdQueryWrapper<T> extends AbstractTdQueryWrapper<T> {
 
     public TdQueryWrapper(Class<T> entityClass) {
         super(entityClass);
@@ -486,7 +485,7 @@ public class TdQueryWrapper<T extends TdBaseEntity> extends AbstractTdQueryWrapp
      * @param joinTableClass 连接表类
      * @return {@link TdQueryWrapper }<{@link T }>
      */
-    public <R extends TdBaseEntity> TdQueryWrapper<T> join(JoinTypeEnum joinType, Class<R> joinTableClass) {
+    public <R> TdQueryWrapper<T> join(JoinTypeEnum joinType, Class<R> joinTableClass) {
         String joinTbName = TdSqlUtil.getTbName(joinTableClass);
         joinQueryEntityList.add(JoinQuery.builder()
                 .joinType(joinType)

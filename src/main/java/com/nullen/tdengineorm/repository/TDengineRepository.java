@@ -7,7 +7,6 @@ import com.nullen.tdengineorm.annotation.TdTag;
 import com.nullen.tdengineorm.constant.SqlConstant;
 import com.nullen.tdengineorm.constant.TdSqlConstant;
 import com.nullen.tdengineorm.dto.Page;
-import com.nullen.tdengineorm.entity.TdBaseEntity;
 import com.nullen.tdengineorm.enums.TdLogLevelEnum;
 import com.nullen.tdengineorm.exception.TdOrmException;
 import com.nullen.tdengineorm.exception.TdOrmExceptionCode;
@@ -53,7 +52,7 @@ public class TDengineRepository {
      * @param clazz clazz
      * @return {@link T }
      */
-    public <T extends TdBaseEntity> T getLastOneByTs(Class<T> clazz) {
+    public <T> T getLastOneByTs(Class<T> clazz) {
         TdQueryWrapper<T> wrapper = TdWrappers.queryWrapper(clazz)
                 .selectAll()
                 .orderByDesc("ts")
@@ -102,11 +101,11 @@ public class TDengineRepository {
         return listWithTdLog(wrapper.getSql(), wrapper.getParamsMap(), resultClass);
     }
 
-    public <T extends TdBaseEntity> Page<T> page(long pageNo, long pageSize, TdQueryWrapper<T> wrapper) {
+    public <T> Page<T> page(long pageNo, long pageSize, TdQueryWrapper<T> wrapper) {
         return page(pageNo, pageSize, wrapper, wrapper.getEntityClass());
     }
 
-    public <T extends TdBaseEntity, R> Page<R> page(long pageNo, long pageSize, TdQueryWrapper<T> wrapper, Class<R> resultClass) {
+    public <T, R> Page<R> page(long pageNo, long pageSize, TdQueryWrapper<T> wrapper, Class<R> resultClass) {
         String countSql = "select count(*) from (" + wrapper.getSql() + ") t";
         Long count = namedParameterJdbcTemplate.queryForObject(countSql, wrapper.getParamsMap(), Long.class);
         Page<R> page = Page.<R>builder()
@@ -213,7 +212,7 @@ public class TDengineRepository {
      * @param clazz clazz
      * @return int
      */
-    public <T extends TdBaseEntity> int createStableTable(Class<T> clazz) {
+    public <T> int createStableTable(Class<T> clazz) {
         List<Field> fieldList = ClassUtil.getAllFields(clazz);
         // 区分普通字段和Tag字段
         Pair<List<Field>, List<Field>> fieldListPairByTag = TdSqlUtil.differentiateByTag(fieldList);
@@ -264,7 +263,7 @@ public class TDengineRepository {
         }
     }
 
-    public <T extends TdBaseEntity> int deleteByTs(Class<T> clazz, Timestamp ts) {
+    public <T> int deleteByTs(Class<T> clazz, Timestamp ts) {
         String tbName = TdSqlUtil.getTbName(clazz);
         String sql = "DELETE FROM " + tbName + " WHERE ts = :ts";
         Map<String, Object> paramsMap = new HashMap<>(1);
@@ -272,7 +271,7 @@ public class TDengineRepository {
         return namedParameterJdbcTemplate.update(sql, paramsMap);
     }
 
-    public <T extends TdBaseEntity> int batchDeleteByTs(Class<T> clazz, List<Timestamp> tsList) {
+    public <T> int batchDeleteByTs(Class<T> clazz, List<Timestamp> tsList) {
         String tbName = TdSqlUtil.getTbName(clazz);
         String sql = "DELETE FROM " + tbName + " WHERE ts IN (:tsList)";
         Map<String, Object> paramsMap = new HashMap<>(1);

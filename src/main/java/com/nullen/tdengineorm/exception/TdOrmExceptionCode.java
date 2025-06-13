@@ -31,42 +31,32 @@ public enum TdOrmExceptionCode implements ExceptionCode {
     NO_PRIMARY_TS(70005, "No @PrimaryTs field found!"),
 
     /**
-     * 存在多个被@PrimaryTs标记的字段
-     */
-    MULTI_PRIMARY_TS(70006, "Multi @PrimaryTs field found!"),
-
-    /**
-     * 被@PrimaryTs标记的字段类型不是Timestamp
-     */
-    PRIMARY_TS_NOT_TIMESTAMP(70007, "@PrimaryTs field type must be 'Timestamp'!"),
-
-    /**
      * sql嵌套层数超过1层
      */
-    SQL_LAYER_OUT_LIMITED(70008, "The number of layers exceeds the limit!"),
+    SQL_LAYER_OUT_LIMITED(70006, "The number of layers exceeds the limit!"),
 
     /**
      * 未设置最终字段别名
      */
-    COLUMN_NO_ALIAS_NAME(70009, "Select joiner must set finalColumnAliasName!"),
+    COLUMN_NO_ALIAS_NAME(70007, "Select joiner must set finalColumnAliasName!"),
     /**
      * 未匹配到合适的字段类型
      */
-    CANT_NOT_MATCH_FIELD_TYPE(70010, "Not matched to the appropriate field type!"),
+    CANT_NOT_MATCH_FIELD_TYPE(7008, "Not matched to the appropriate field type!"),
 
     /**
      * 参数值不能为空
      */
-    PARAM_VALUE_CANT_NOT_BE_NULL(70011, "Parameter value cannot be null!"),
+    PARAM_VALUE_CANT_NOT_BE_NULL(7009, "Parameter value cannot be null!"),
 
     /**
      * 多次调用GroupBy
      */
-    MULTI_GROUP_BY(70012, "Call GroupBy multiple times!"),
+    MULTI_GROUP_BY(70010, "Call GroupBy multiple times!"),
     /**
      * 缺少TAG字段
      */
-    NO_TAG_FIELD(70013, "The super table must have a tag field!"),
+    NO_TAG_FIELD(70011, "The super table must have a tag field!"),
     ;
 
     private final Integer code;

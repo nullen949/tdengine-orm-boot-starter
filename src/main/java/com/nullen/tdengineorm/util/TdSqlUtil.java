@@ -22,7 +22,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -265,7 +264,9 @@ public class TdSqlUtil {
      */
     public static String getColumnName(Field field) {
         TdColumn tableField = field.getAnnotation(TdColumn.class);
-        return tableField == null ? StrUtil.toUnderlineCase(field.getName()) : tableField.value();
+        String fieldNameUnderlineCase = StrUtil.toUnderlineCase(field.getName());
+        return tableField == null ? fieldNameUnderlineCase
+                : StrUtil.isBlank(tableField.value()) ? fieldNameUnderlineCase : tableField.value();
     }
 
     /**
@@ -509,7 +510,7 @@ public class TdSqlUtil {
 
 
     /**
-     * 检查是否有且只有一个被@PrimaryTs注解标记且类型为Timestamp的字段
+     * 检查是否有且只有一个名称为Ts的字段
      *
      * @param fieldList 待检查的字段列表
      * @return {@link Field }
@@ -521,14 +522,7 @@ public class TdSqlUtil {
         if (CollectionUtils.isEmpty(tsFieldList)) {
             throw new TdOrmException(TdOrmExceptionCode.NO_PRIMARY_TS);
         }
-        if (tsFieldList.size() > 1) {
-            throw new TdOrmException(TdOrmExceptionCode.MULTI_PRIMARY_TS);
-        }
-        Field field = tsFieldList.get(0);
-        if (!Timestamp.class.equals(field.getType())) {
-            throw new TdOrmException(TdOrmExceptionCode.PRIMARY_TS_NOT_TIMESTAMP);
-        }
-        return field;
+        return tsFieldList.get(0);
     }
 
     public static String buildAggregationFunc(TdSelectFuncEnum tdSelectFuncEnum, String columnName, String aliasName) {
