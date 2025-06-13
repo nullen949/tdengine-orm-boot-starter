@@ -93,10 +93,13 @@ public abstract class AbstractTdQueryWrapper<T> extends AbstractTdWrapper<T> {
 
     private void buildSelect(StringBuilder sql) {
         sql.append(SqlConstant.SELECT);
-        if (ArrayUtil.isEmpty(selectColumnNames)) {
+        if (ArrayUtil.isEmpty(selectColumnNames) && selectCalcWrapper == null) {
             // 默认查询所有字段
             sql.append(SqlConstant.ALL);
-        } else {
+            return;
+        }
+
+        if (ArrayUtil.isNotEmpty(selectColumnNames)) {
             for (int i = 1; i <= selectColumnNames.length; i++) {
                 if (i > 1) {
                     sql.append(SqlConstant.COMMA);
