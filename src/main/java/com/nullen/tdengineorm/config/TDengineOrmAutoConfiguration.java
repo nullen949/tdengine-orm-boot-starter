@@ -10,6 +10,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.relational.core.dialect.Dialect;
+import org.springframework.data.relational.core.dialect.MySqlDialect;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -29,6 +31,11 @@ public class TDengineOrmAutoConfiguration {
     public static final String TDENGINE_JDBC_TEMPLATE = "tdengineJdbcTemplate";
     public static final String TDENGINE_NAMED_PARAMETER_JDBC_TEMPLATE = "tdengineNamedParameterJdbcTemplate";
 
+    @Bean
+    public Dialect jdbcDialect() {
+        return new MySqlDialect() {
+        };
+    }
 
     /**
      * 当 Druid 连接池存在时，创建 Druid DataSource
